@@ -46,4 +46,10 @@ public:
         }
     }
 
+
+
+    ~Server()
+    {
+        close(serverSocket);
+    }
 };
