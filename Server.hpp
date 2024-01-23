@@ -19,6 +19,7 @@ private:
     int max_client;
     int serverSocket;
     int max_thread;
+    Log log;
     bool FreeThread(std::atomic_ulong* count_thread)
     {
         for(;;)
