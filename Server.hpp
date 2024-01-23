@@ -10,3 +10,12 @@
 
 #define ERROR "\033[1;31m[ERROR]\033[0m "
 #define INFO "\033[1;32m[INFO]\033[0m "
+
+class Server
+{
+private:
+    sockaddr_in serverAddress;
+    int max_client;
+    int serverSocket;
+    int max_thread;
+};
