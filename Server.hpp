@@ -46,7 +46,25 @@ public:
         }
     }
 
-
+    void Start(void(*action)(int*))
+    {
+        std::atomic_ulong count_thread = std::atomic_ulong(0);
+        for(;;)
+        {
+            listen(serverSocket, SOMAXCONN);
+            int clientSocket;
+            clientSocket = accept(serverSocket, nullptr, nullptr);
+            if (FreeThread(&count_thread))
+            {
+                std::thread([&action, &count_thread, &clientSocket](){
+                    count_thread++;
+                    action(&clientSocket);
+                    count_thread--;
+                    close(clientSocket);
+                }).detach();
+            }
+        }
+    }
 
     ~Server()
     {
