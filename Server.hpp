@@ -18,4 +18,12 @@ private:
     int max_client;
     int serverSocket;
     int max_thread;
+    bool FreeThread(std::atomic_ulong* count_thread)
+    {
+        for(;;)
+        {
+            if (*count_thread < max_thread)
+                return true;
+        }
+    }
 };
