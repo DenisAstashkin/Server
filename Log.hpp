@@ -12,4 +12,12 @@ public:
         this->path = path;
         this->name = name;
     }
+
+
+
+    ~Log()
+    {
+        path = "";
+        name = "";
+    }
 };
