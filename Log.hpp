@@ -13,7 +13,24 @@ public:
         this->name = name;
     }
 
-
+    void write(std::string msg)
+    {
+        std::ofstream out;
+        try
+        {
+            out.open(path + name, std::ios::out);
+            if (out.is_open())
+            {
+                out << msg << "\n";
+            }
+            out.close();
+        }
+        catch (std::exception e)
+        {
+            out.close();
+        }
+        out.close();
+    }
 
     ~Log()
     {
