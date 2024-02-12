@@ -100,8 +100,22 @@ public:
         }        
     }
 
-    ~Server()
+    void Stop()
     {
-        close(serverSocket);
+        start = false;     
+        shutdown(serverSocket, SHUT_RDWR); 
+        close(serverSocket);        
+        for (int i = 0; i < max_threads; i++)
+        {
+            if(threads[i].joinable())
+                threads[i].join();
+        }
+        threads.clear();
+        clients.clear();
+        serverAddress = sockaddr_in();
+        max_client = 0;
+        serverSocket = 0;
+        max_threads = 0;
+        log.~Log();
     }
 };
