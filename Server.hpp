@@ -3,10 +3,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <thread>
-#include <atomic>
-#include <stdlib.h>
+#include <cstdlib>
 #include <arpa/inet.h>
-#include <stdint.h>
+#include <cstdint>
 #include "Log.hpp"
 
 #define ERROR "\033[1;31m[ERROR]\033[0m "
