@@ -23,13 +23,19 @@ private:
     Log log;
     vector<vector<int>> clients;
     vector<thread> threads;
-    bool FreeThread(std::atomic_ulong* count_thread)
+    int FreeThread()
     {
-        for(;;)
+        int min = clients[0].size();
+        int number_thread = 0;
+        for(int i = 1; i < max_threads; i++)
         {
-            if (*count_thread < max_thread)
-                return true;
+            if (min > clients[i].size())
+                {
+                    min = clients[i].size();
+                    number_thread = i;
+                }
         }
+        return number_thread;
     }
 public:
     Server(int type_connection=SOCK_STREAM, int ip_version=AF_INET, int protocol=0, std::string ip="127.0.0.1",
