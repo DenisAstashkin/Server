@@ -21,8 +21,8 @@ private:
     int max_threads;
     bool start;
     Log log;
-    vector<vector<int>> clients;
-    vector<thread> threads;
+    std::vector<std::vector<int>> clients;
+    std::vector<std::thread> threads;
     int FreeThread()
     {
         int min = clients[0].size();
@@ -38,8 +38,8 @@ private:
         return number_thread;
     }
 public:
-    Server(int type_connection=SOCK_STREAM, int ip_version=AF_INET, int protocol=0, std::string ip="127.0.0.1",
-           std::string port="8700", int max_client=SOMAXCONN, std::string path_log="unknown", std::string log_name="unknown", int max_threads=2)
+    Server(int type_connection=SOCK_STREAM, int ip_version=AF_INET, int protocol=0, std::string ip="127.0.0.1", 
+            std::string port="8700", int max_client=SOMAXCONN, std::string path_log="", std::string log_name="unknown.txt", int max_threads=std::thread::hardware_concurrency())
     {
         log = Log(path_log, log_name);
         serverSocket = socket(ip_version, type_connection, protocol);
@@ -51,7 +51,7 @@ public:
         serverAddress.sin_family = ip_version;
         serverAddress.sin_port = htons(atoi(port.c_str()));
         serverAddress.sin_addr.s_addr = inet_addr(ip.c_str());
-        this->max_thread = max_thread;
+        this->max_threads = max_threads;
         if (bind(serverSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
         {
             log.write(std::string().append(ERROR).append("Failed bind."));
@@ -65,6 +65,8 @@ public:
         {
             max_client = SOMAXCONN;
         }
+        clients.reserve(max_threads);
+        threads.reserve(max_threads);
     }
 
     void Start(void(*action)(int*))
