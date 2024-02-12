@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <arpa/inet.h>
 #include <cstdint>
+#include <vector>
 #include "Log.hpp"
 
 #define ERROR "\033[1;31m[ERROR]\033[0m "
@@ -17,8 +18,11 @@ private:
     sockaddr_in serverAddress;
     int max_client;
     int serverSocket;
-    int max_thread;
+    int max_threads;
+    bool start;
     Log log;
+    vector<vector<int>> clients;
+    vector<thread> threads;
     bool FreeThread(std::atomic_ulong* count_thread)
     {
         for(;;)
