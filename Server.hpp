@@ -69,33 +69,35 @@ public:
         threads.reserve(max_threads);
     }
 
-    void Start(void(*action)(int*))
+    void Start(void(*action)(std::vector<int>* clients, bool* status_server))
     {
         log.write(std::string().append(INFO).append("Server start..."));
-        std::atomic_ulong count_thread = std::atomic_ulong(0);
-        if (listen(serverSocket, SOMAXCONN) < 0)
+        for (int i = 0; i < max_threads; i++)
         {
-            log.write(std::string().append(ERROR).append("Failed listen."));
-            exit(-1);
+            threads.push_back(std::thread([&action](std::vector<int>* clients, bool* status_server)
+            {        
+                action(clients, status_server);
+            }, &clients[i], &start));
         }
-        int clientSocket;
-        for(;;)
+        for (int i = 0; i < max_threads; i++)
         {
-            if ((clientSocket = accept(serverSocket, nullptr, nullptr) < 0))
+            threads[i].detach();
+        }
+        start = true;
+        for(;start;)
+        {
+            if (listen(serverSocket, max_client))
             {
-                log.write(std::string().append(ERROR).append("Client try connected."));
+                log.write(std::string().append(ERROR).append("Failed listen."));
                 exit(-1);
             }
-            if (FreeThread(&count_thread))
+            int clientSocket = accept(serverSocket, NULL, NULL);
+            if (clientSocket < 0)
             {
-                std::thread([&action, &count_thread, &clientSocket](){
-                    count_thread++;
-                    action(&clientSocket);
-                    count_thread--;
-                    close(clientSocket);
-                }).detach();
+                log.write(std::string().append(ERROR).append("Client try connected."));
             }
-        }
+            clients[FreeThread()].push_back(clientSocket);
+        }        
     }
 
     ~Server()
