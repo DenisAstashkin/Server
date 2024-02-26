@@ -72,6 +72,7 @@ public:
     void Start(void(*action)(std::vector<int>* clients, bool* status_server))
     {
         log.write(std::string().append(INFO).append("Server start..."));
+        start = true;
         for (int i = 0; i < max_threads; i++)
         {
             threads.push_back(std::thread([&action](std::vector<int>* clients, bool* status_server)
@@ -82,8 +83,7 @@ public:
         for (int i = 0; i < max_threads; i++)
         {
             threads[i].detach();
-        }
-        start = true;
+        }        
         for(;start;)
         {
             if (listen(serverSocket, max_client))
